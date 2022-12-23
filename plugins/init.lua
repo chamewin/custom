@@ -3,7 +3,12 @@ local overrides = require "custom.plugins.overrides"
 return {
 
   ["goolord/alpha-nvim"] = false,
-  ["glepnir/dashboard-nvim"] = {},
+
+  ["glepnir/dashboard-nvim"] = {
+    config = function()
+      require "lua.custom.plugins.dashboard-nvim"
+    end,
+  },
 
   -- Override plugin definition options
   ["neovim/nvim-lspconfig"] = {
@@ -42,6 +47,15 @@ return {
     end,
   },
 
-  -- remove plugin
-  -- ["hrsh7th/cmp-path"] = false,
+  ["windwp/nvim-ts-autotag"] = {
+    ft = { "html", "javascriptreact" },
+    after = "nvim-treesitter",
+    config = function()
+      local present, autotag = pcall(require, "nvim-ts-autotag")
+
+      if present then
+        autotag.setup()
+      end
+    end,
+  },
 }
