@@ -1,26 +1,19 @@
-local overrides = require "custom.plugins.overrides"
+local overrides = require "custom.plugins.configs.overrides"
 
 return {
-
-  ["goolord/alpha-nvim"] = false,
-
-  ["glepnir/dashboard-nvim"] = {
-    config = function()
-      require "lua.custom.plugins.dashboard-nvim"
-    end,
+  ["goolord/alpha-nvim"] = {
+    disable = false,
+    cmd = "Alpha",
+    config =function ()
+      require "plugins.configs.alpha"
+    end
   },
 
-  -- Override plugin definition options
   ["neovim/nvim-lspconfig"] = {
-    config = function()
+    config =function ()
       require "plugins.configs.lspconfig"
-      require "custom.plugins.lspconfig"
+      require "custom.plugins.configs.lspconfig"
     end,
-  },
-
-  -- overrde plugin configs
-  ["nvim-treesitter/nvim-treesitter"] = {
-    override_options = overrides.treesitter,
   },
 
   ["williamboman/mason.nvim"] = {
@@ -31,31 +24,35 @@ return {
     override_options = overrides.nvimtree,
   },
 
-  -- Install a plugin
-  ["max397574/better-escape.nvim"] = {
-    event = "InsertEnter",
+  ["windwp/nvim-ts-autotag"] = {
     config = function()
-      require("better_escape").setup()
+      require('nvim-ts-autotag').setup()
     end,
   },
 
-  -- code formatting, linting etc
+  ["nvim-treesitter/nvim-treesitter"] = {
+    overrides_options = overrides.treesitter,
+  },
+
   ["jose-elias-alvarez/null-ls.nvim"] = {
     after = "nvim-lspconfig",
     config = function()
-      require "custom.plugins.null-ls"
+      require "custom.plugins.configs.null-ls"
     end,
   },
 
-  ["windwp/nvim-ts-autotag"] = {
-    ft = { "html", "javascriptreact" },
-    after = "nvim-treesitter",
+  ["rmagatti/auto-session"] = {
     config = function()
-      local present, autotag = pcall(require, "nvim-ts-autotag")
-
-      if present then
-        autotag.setup()
-      end
+      require("auto-session").setup {
+        log_level = "error",
+        cwd_change_handling = {
+          post_cwd_changed_hook = function()
+            require("lualine").refresh()
+          end,
+        },
+        pre_save_cmds = {"NvimTreeClose"},
+        post_restore_cmds = {"NvimTreeToggle"}
+      }
     end,
   },
 }
